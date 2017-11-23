@@ -99,3 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# My super secret keys file
+keys.py
