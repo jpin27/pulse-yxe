@@ -2,7 +2,11 @@
 import tweepy
 import time
 import sys
-import csv
+import json
+import jsonpickle
+
+# from tweepy import Stream
+# from tweepy.streaming import StreamListener
 
 # from our keys module (keys.py), import the keys dictionary
 from keys import keys
@@ -12,10 +16,22 @@ CONSUMER_SECRET = keys['consumer_secret']
 ACCESS_TOKEN = keys['access_token']
 ACCESS_TOKEN_SECRET = keys['access_token_secret']
 
+IS_DATAMINED = True
+
 # Some authentication stuff. Magic. Don't touch.
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
-api = tweepy.API(auth)
+# auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+auth = tweepy.AppAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+# auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+
+# Stop mining when rate limit is exceeded and wait for 15 minutes
+api = tweepy.API(auth, wait_on_rate_limit = True, wait_on_rate_limit_notify = True)
+ 
+#Error handling
+if (not api):
+    print ("Problem Connecting to API")
+ 
+
+# Saskatoon id is:  4bb41f9d86e16416
  
 # Let's define an error handler.
 def getExceptionMessage(msg):
@@ -43,62 +59,80 @@ def doSanityCheck():
 		+ ' following ' + str(user.friends_count) 
 		+ ' people.')
 
-# K word up bitches. Here's the sitch. Pseudocode tiem.
-#
-# 1. Run an API call via Tweepy to search for tweets near saskatoon since 2013-11-23
-# 2. Grab all "ungrabbed" search results and scribe it as a CSV file (maybe make a function to encode to CSV)
-# 3. Sleep for 15 minutes, then do it again.
-# 4. Do this for 24 hours and hopefully we'll go back three years.
-
-# TODO: In the future, scrape tweets with the #yxe or #saskatoon hashtag as well.
+#export PYTHONIOENCODING=utf-8
+#export ConEmuDefaultCp=65001
 
 
-doSanityCheck()
+############ BEGIN DATAMINER ############
 
-for tweet in tweepy.Cursor(
-	api.search,
-	q = "saskatoon",
-	count = 100,
-	).items(100):
-    
-    	print(tweet.created_at, tweet.text.encode('UTF8'))
-    	print('\n')
+#This is what we are searching for
+#We can restrict the location of tweets using place:id 
+#We can search for multiple phrases using OR
+searchQuery = 'place:4bb41f9d86e16416 OR #saskatoon OR #yxe OR saskatoon OR yxe'
+
+#Search 1 million tweets
+maxTweets = 1000000
+
+#The twitter Search API allows up to 100 tweets per query
+tweetsPerQry = 100
+tweetCount = 0
+
+if IS_DATAMINED is not True:
+    #Open a text file to save the tweets to
+    with open('stoonTweets.json', 'a') as f:
+
+        #Tell the Cursor method that we want to use the Search API (api.search)
+        #Also tell Cursor our query, and the maximum number of tweets to return
+        for tweet in tweepy.Cursor(api.search,q=searchQuery).items(maxTweets) :         
+
+            #Verify the tweet has place info before writing (It should, if it got past our place filter)
+            if tweet.place is not None:
+                
+                #Write the JSON format to the text file, and add one to the number of tweets we've collected
+                f.write(jsonpickle.encode(tweet._json, unpicklable=False) + '\n')
+                tweetCount += 1
+
+        #Display how many tweets we have collected
+        print("Downloaded {0} tweets".format(tweetCount))
+
+############ END DATAMINER ############
+
+
+
+
+############ BEGIN ANALYSIS ############
+
+with open('stoonTweets.json', 'r') as f:
+    line = f.readline() # read only the first tweet/line
+    tweet = json.loads(line) # load it as Python dict
+    print(json.dumps(tweet, indent=4)) # pretty-print
+
+############ END ANALYSIS ############
+
+
+############ CSV SERIES ############
+
+# # Open/create a file to append data to
+# csvFile = open('result.csv', 'a')
+
+# #Use csv writer
+# csvWriter = csv.writer(csvFile)
 
 # for tweet in tweepy.Cursor(api.search,
-# 	q = "google",
-# 	since = "2014-02-14",
-# 	until = "2014-02-15",
-# 	lang = "en").items():
-# 		print(tweet.created_at, tweet.text)
+# 	q = "saskatoon",
+# 	since = "2017-11-27",
+# 	# until = "2014-02-15",
+# 	lang = "en",
+# 	tweet_mode = "extended").items(100):
 
+# 	if 'retweeted_status' in dir(tweet):
+# 		fullTextTweet = tweet.retweeted_status.full_text
+# 	else:
+# 		fullTextTweet = tweet.full_text
+    
+#     # Write a row to the CSV file. I use encode UTF-8
+# 	csvWriter.writerow([tweet.created_at, fullTextTweet.encode('utf-8')])
+# 	print(tweet.created_at, fullTextTweet)
+# csvFile.close()
 
-
-
-
-
-
-# Boilerplate code. Use as basis. Delete if necessary.
-# twts = api.search(q="Hello World!") 
-# #list of specific strings we want to check for in Tweets
-# t = ['Hello world!',
-#     'Hello World!',
-#     'Hello World!!!',
-#     'Hello world!!!',
-#     'Hello, world!',
-#     'Hello, World!']
-
-# s = 
-# for s in twt:
-#     for i in t:
-#         if i == s.text:
-#             sn = s.user.screen_name
-#             m = "@%s Hello!" % (sn)
-#             s = api.update_status(m, s.id)
-
-# for s in twt:
-#     for i in t:
-#         if i == s.text:
-#             sn = s.user.screen_name
-#             m = "@%s Hello!" % (sn)
-#             s = api.update_status(m, s.id)
-
+############ END CSV SERIES ############

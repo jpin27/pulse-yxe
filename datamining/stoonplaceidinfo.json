@@ -1,0 +1,88 @@
+{
+	"id": "4bb41f9d86e16416",
+	"url": "https://api.twitter.com/1.1/geo/id/4bb41f9d86e16416.json",
+	"place_type": "city",
+	"name": "Saskatoon",
+	"full_name": "Saskatoon, Saskatchewan",
+	"country_code": "CA",
+	"country": "Canada",
+	"contained_within": [
+		{
+			"id": "01658369259237bb",
+			"url": "https://api.twitter.com/1.1/geo/id/01658369259237bb.json",
+			"place_type": "admin",
+			"name": "Saskatoon",
+			"full_name": "Saskatoon",
+			"country_code": "CA",
+			"country": "Canada",
+			"centroid": [
+				-106.50302,
+				52.070694
+			],
+			"bounding_box": {
+				"type": "Polygon",
+				"coordinates": [
+					[
+						[
+							-107.29957,
+							51.70629
+						],
+						[
+							-107.29957,
+							53.452744
+						],
+						[
+							-105.07732,
+							53.452744
+						],
+						[
+							-105.07732,
+							51.70629
+						],
+						[
+							-107.29957,
+							51.70629
+						]
+					]
+				]
+			},
+			"attributes": {}
+		}
+	],
+	"geometry": null,
+	"polylines": [],
+	"centroid": [
+		-106.664085,
+		52.150078
+	],
+	"bounding_box": {
+		"type": "Polygon",
+		"coordinates": [
+			[
+				[
+					-106.82495,
+					52.069633
+				],
+				[
+					-106.82495,
+					52.230522
+				],
+				[
+					-106.50369,
+					52.230522
+				],
+				[
+					-106.50369,
+					52.069633
+				],
+				[
+					-106.82495,
+					52.069633
+				]
+			]
+		]
+	},
+	"attributes": {
+		"geotagCount": "182"
+	}
+}
