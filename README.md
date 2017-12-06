@@ -7,4 +7,8 @@ Dependencies
 
 pip install jsonpickle
 pip install tweepy
+pip install pandas
 
+Installation
+
+pip install -r requirements.txt
