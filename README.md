@@ -9,7 +9,7 @@ Pulse YXE is a data analysis of Saskatoon tweets using Python.
 
 ### To view the online notebook
 
-You can view the Jupyter Notebook that details the analytics done on the dataset [from here](http://nbviewer.jupyter.org/github/aicxe/pulse-yxe/blob/master/datamining/Pulse%20YXE%20Data%20Analytics.ipynb).
+You can view the Jupyter Notebook that details the analytics done on the dataset [from here](http://nbviewer.jupyter.org/github/aicxe/pulse-yxe/blob/master/datamining/Pulse%20YXE%20Data%20Analytics.ipynb?flush_cache=true).
 
 ### Package Dependencies
 
